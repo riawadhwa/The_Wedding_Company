@@ -234,8 +234,8 @@ Trade-offs:
 
 - Instead of creating one MongoDB collection per organization, store all organizations' data inside a single shared collection, and differentiate their data using an **orgId** field
 - MongoDB performance degrades when:
-- There are too many collections
-- Each collection has its own index overhead, Metadata grows excessively
+-     There are too many collections
+-     Each collection has its own index overhead, Metadata grows excessively
 
 - But with a shared collection, MongoDB handles millions of documents extremely efficiently inside one collection
 - When the data grows too large, you can horizontally scale by sharding on orgId
