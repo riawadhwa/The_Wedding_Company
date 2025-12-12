@@ -91,3 +91,47 @@ exports.getOrg = async (req, res) => {
     res.status(500).json(ERR.INTERNAL_ERROR);
   }
 };
+
+exports.updateOrg = async (req, res) => {
+  try {
+    const { new_organization_name, email, password } = req.body;
+
+    if (!new_organization_name)
+      return res.status(400).json(ERR.INVALID_ORG_NAME);
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) return res.status(401).json(ERR.INVALID_ADMIN_CREDENTIALS);
+    const valid = await bcrypt.compare(password, admin.password);
+    if (!valid) return res.status(401).json(ERR.INVALID_ADMIN_CREDENTIALS);
+
+    const org = await MasterOrg.findOne({ admin: admin._id });
+    if (!org) return res.status(404).json(ERR.ORG_NOT_FOUND);
+
+    if (new_organization_name) {
+      const newSan = cleanOrgName(new_organization_name);
+      const newCollectionName = `org_${newSan}`;
+
+      await mongoose.connection.createCollection(newCollectionName);
+
+      const oldCollectionName = org.org_collection_name;
+      const oldCol = mongoose.connection.collection(oldCollectionName);
+      const newCol = mongoose.connection.collection(newCollectionName);
+
+      const oldDocs = await oldCol.find({}).toArray();
+
+      if (oldDocs.length > 0) {
+        await newCol.insertMany(oldDocs);
+      }
+
+      await mongoose.connection.dropCollection(oldCollectionName);
+
+      org.organization_name = new_organization_name;
+      org.org_collection_name = newCollectionName;
+      await org.save();
+    }
+
+    res.json({ message: "Organization updated", org });
+  } catch (err) {
+    res.status(500).json(ERR.INTERNAL_ERROR);
+  }
+};
