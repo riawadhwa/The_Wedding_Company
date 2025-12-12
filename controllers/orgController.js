@@ -123,7 +123,7 @@ exports.updateOrg = async (req, res) => {
 
       await mongoose.connection.dropCollection(oldCollectionName);
 
-      org.organization_name = new_organization_name;
+      org.organization_name = newSan;
       org.org_collection_name = newCollectionName;
       await org.save();
     }
@@ -168,8 +168,7 @@ exports.deleteOrg = async (req, res) => {
 
     if (!organization_name) return res.status(400).json(ERR.INVALID_ORG_NAME);
     const clean_org_name = cleanOrgName(organization_name);
-    console.log(organization_name);
-    console.log(clean_org_name);
+
     const org = await MasterOrg.findOne({ organization_name: clean_org_name });
     if (!org) return res.status(404).json(ERR.ORG_NOT_FOUND);
 
