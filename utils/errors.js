@@ -19,7 +19,7 @@ module.exports = {
   },
   UNAUTHORIZED: {
     code: "AUTH_2002",
-    message: "Unauthorized access.",
+    message: "Session expired.",
   },
 
   INVALID_EMAIL_FORMAT: {

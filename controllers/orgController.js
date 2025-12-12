@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-dotenv.config();
 
 const { MasterOrg, Admin } = require("../models/MasterOrg");
 const { cleanOrgName } = require("../utils/clean");
@@ -131,6 +129,34 @@ exports.updateOrg = async (req, res) => {
     }
 
     res.json({ message: "Organization updated", org });
+  } catch (err) {
+    res.status(500).json(ERR.INTERNAL_ERROR);
+  }
+};
+
+exports.adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) return res.status(401).json(ERR.INVALID_ADMIN_CREDENTIALS);
+
+    const valid = await bcrypt.compare(password, admin.password);
+    if (!valid) return res.status(401).json(ERR.INVALID_ADMIN_CREDENTIALS);
+
+    const org = await MasterOrg.findOne({ admin: admin._id });
+    if (!org) return res.status(404).json(ERR.ORG_NOT_FOUND);
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is missing in .env!");
+      return res.status(500).json(ERR.INTERNAL_ERROR);
+    }
+
+    const token = jwt.sign({ adminId: admin._id, orgId: org._id }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
+
+    res.json({ message: "Login success", token });
   } catch (err) {
     res.status(500).json(ERR.INTERNAL_ERROR);
   }
