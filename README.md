@@ -207,3 +207,46 @@ Every token stores:
 This ensures every request knows **who** and **which org** is making the call.
 
 ---
+
+### ⚖️ Scalability & Trade-offs
+
+### 1. Dynamic Collections Per Organization
+
+Trade-offs:
+
+- If the number of organizations grows large, MongoDB may end up with hundreds or thousands of collections, which increases metadata overhead.
+
+- This approach is scalable for a moderate number of tenants, but not ideal for large-scale SaaS platforms.
+
+### 2. Single Master Database
+
+Trade-offs:
+
+- A single point of failure if not replicated
+
+- Harder to isolate performance issues between organizations
+
+- Scaling horizontally at the database layer becomes more complex
+
+### 🚀 If I were designing for higher scalability
+
+## A. Shared Collections With orgId Partitioning
+
+- Instead of creating one MongoDB collection per organization, store all organizations' data inside a single shared collection, and differentiate their data using an **orgId** field
+- MongoDB performance degrades when:
+- There are too many collections
+- Each collection has its own index overhead, Metadata grows excessively
+
+- But with a shared collection, MongoDB handles millions of documents extremely efficiently inside one collection
+- When the data grows too large, you can horizontally scale by sharding on orgId
+
+## B. Separate Database Per Organization
+
+- Per-tenant scaling
+- Per-tenant backups and recovery
+
+## C. Introducing a Service Layer
+
+- Controllers → Services
+- Business logic becomes cleaner
+- Easier testing and future maintainability
