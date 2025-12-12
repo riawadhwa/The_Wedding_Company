@@ -10,7 +10,7 @@ module.exports = {
   },
   INVALID_ORG_NAME: {
     code: "ORG_1003",
-    message: "Invalid or missing organization name.",
+    message: "Invalid organization name.",
   },
 
   INVALID_ADMIN_CREDENTIALS: {

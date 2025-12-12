@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const { createOrg } = require("./controllers/orgController");
+const { createOrg, getOrg } = require("./controllers/orgController");
 
 const app = express();
 app.use(express.json());
@@ -18,6 +18,7 @@ mongoose
 app.get("/", (req, res) => res.send("management service"));
 
 app.post("/org/create", createOrg);
+app.get("/org/get", getOrg);
 
 app.listen(PORT, () => {
   console.log(`Listening on http://localhost:${PORT}`);

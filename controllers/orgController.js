@@ -76,3 +76,18 @@ exports.createOrg = async (req, res) => {
     return res.status(500).json(ERR.INTERNAL_ERROR);
   }
 };
+
+exports.getOrg = async (req, res) => {
+  try {
+    const { organization_name } = req.body;
+
+    if (!organization_name) return res.status(400).json(ERR.INVALID_ORG_NAME);
+    const clean_org_name = cleanOrgName(organization_name);
+    const org = await MasterOrg.findOne({ organization_name: clean_org_name });
+    if (!org) return res.status(404).json(ERR.ORG_NOT_FOUND);
+
+    res.json(org);
+  } catch (err) {
+    res.status(500).json(ERR.INTERNAL_ERROR);
+  }
+};
