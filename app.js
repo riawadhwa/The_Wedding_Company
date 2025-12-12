@@ -1,23 +1,24 @@
-const express = require('express');
-const mongoose = require('mongoose');
+const express = require("express");
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-require('dotenv').config();
+const { createOrg } = require("./controllers/orgController");
+
 const app = express();
-
 app.use(express.json());
-
-app.get('/',(req,res) => res.send('management service'));
 
 const PORT = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('MongoDB connected successfully!'))
-    .catch(err => console.error('MongoDB connection error:',err));
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected successfully!"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
+//routes
+app.get("/", (req, res) => res.send("management service"));
 
-app.listen (PORT, () => {
-    console.log(`Listening on http://localhost:${PORT}`)
+app.post("/org/create", createOrg);
+
+app.listen(PORT, () => {
+  console.log(`Listening on http://localhost:${PORT}`);
 });
-
-
-
