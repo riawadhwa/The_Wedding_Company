@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const auth = require("./middleware/auth");
+const auth = require("./src/middleware/auth");
 
 const {
   createOrg,
@@ -9,7 +9,7 @@ const {
   updateOrg,
   adminLogin,
   deleteOrg,
-} = require("./controllers/orgController");
+} = require("./src/controllers/orgController");
 
 const app = express();
 app.use(express.json());
