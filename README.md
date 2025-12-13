@@ -226,7 +226,7 @@ This ensures every request knows **who** and **which org** is making the call.
 
 ---
 
-### ⚖️ Scalability & Trade-offs
+## ⚖️ Scalability & Trade-offs
 
 ### 1. Dynamic Collections Per Organization
 
@@ -246,9 +246,9 @@ Trade-offs:
 
 - Scaling horizontally at the database layer becomes more complex
 
-### 🚀 If I were designing for higher scalability
+## 🚀 If I were designing for higher scalability
 
-## A. Shared Collections With orgId Partitioning
+### A. Shared Collections With orgId Partitioning
 
 * Instead of creating one MongoDB collection per organization, store all organizations' data inside a single shared collection, and differentiate their data using an **orgId** field
 * MongoDB performance degrades when:
