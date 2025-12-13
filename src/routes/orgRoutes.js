@@ -9,6 +9,9 @@ const {
 } = require("../controllers/orgController");
 
 const auth = require("../middleware/auth");
+const { apiLimiter } = require("../middleware/rateLimiter");
+
+router.use(apiLimiter);
 
 // Organization routes
 router.post("/create", createOrg);
